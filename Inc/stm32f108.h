@@ -6,6 +6,7 @@
 #define APB1PERIPH_BASE (PERIPH_BASE)
 #define AHBPERIPH_BASE (PERIPH_BASE + 0x20000UL)
 #define RCC_PERIPH_BASE (AHBPERIPH_BASE + 0x1000UL)
+#define AFIO_PERIPH_BASE (APB2PERIPH_BASE + 0x0000UL)
 #define GPIOC_PERIPH_BASE (APB2PERIPH_BASE + 0x1000UL)
 #define GPIOB_PERIPH_BASE (APB2PERIPH_BASE + 0x0C00UL)
 #define GPIOA_PERIPH_BASE (APB2PERIPH_BASE + 0x0800UL)
@@ -28,7 +29,16 @@ typedef struct
     volatile uint32_t AHBRSTR;
     volatile uint32_t CFGR2;
 } RCC_TypeDef;
-
+typedef struct
+{
+    volatile uint32_t EVCR;
+    volatile uint32_t MAPR;
+    volatile uint32_t EXTICR1;
+    volatile uint32_t EXTICR2;
+    volatile uint32_t EXTICR3;
+    volatile uint32_t EXTICR4;
+    volatile uint32_t MAPR2;
+} AFIO_TydeDef;
 typedef struct
 {
     volatile uint32_t CRL;
@@ -75,6 +85,7 @@ typedef struct
     volatile uint32_t DMAR;
 } TIMER_TypeDef;
 #define RCC ((RCC_TypeDef *)RCC_PERIPH_BASE)
+#define AFIO ((AFIO_TydeDef *)AFIO_PERIPH_BASE)
 #define GPIOA ((GPIO_TypeDef *)GPIOA_PERIPH_BASE)
 #define GPIOB ((GPIO_TypeDef *)GPIOB_PERIPH_BASE)
 #define GPIOC ((GPIO_TypeDef *)GPIOC_PERIPH_BASE)

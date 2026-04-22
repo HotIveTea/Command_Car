@@ -6,8 +6,12 @@ Discarded input sections
  .text          0x00000000        0x0 Build/os.o
  .data          0x00000000        0x0 Build/os.o
  .bss           0x00000000        0x0 Build/os.o
- .debug_line    0x00000000        0x0 Build/os.o
- .debug_str     0x00000000       0x9f Build/os.o
+ .debug_info    0x00000000       0x64 Build/os.o
+ .debug_abbrev  0x00000000       0x26 Build/os.o
+ .debug_aranges
+                0x00000000       0x18 Build/os.o
+ .debug_line    0x00000000       0x1d Build/os.o
+ .debug_str     0x00000000      0x123 Build/os.o
  .comment       0x00000000       0x4a Build/os.o
  .ARM.attributes
                 0x00000000       0x2d Build/os.o
@@ -38,132 +42,138 @@ LOAD Build/startup.o
                 0x08000000                isr_vector
                 0x080000ec                . = ALIGN (0x4)
 
-.text           0x080000ec       0x70
+.text           0x080000ec      0x33c
                 0x080000ec                . = ALIGN (0x4)
  *(.text)
- .text          0x080000ec        0xe Build/main.o
-                0x080000ec                main
- *fill*         0x080000fa        0x2 
- .text          0x080000fc       0x60 Build/startup.o
-                0x080000fc                RTC_Alarm_IRQHandler
-                0x080000fc                EXTI2_IRQHandler
-                0x080000fc                SVCall_Handler
-                0x080000fc                TIM1_CC_IRQHandler
-                0x080000fc                Systick_Handler
-                0x080000fc                Hardfault_Handler
-                0x080000fc                PVD_IRQHandler
-                0x080000fc                PendSV_Handler
-                0x080000fc                NMI_Handler
-                0x080000fc                EXTI3_IRQHandler
-                0x080000fc                EXTI0_IRQHandler
-                0x080000fc                I2C2_EV_IRQHandler
-                0x080000fc                UsageFault_Handler
-                0x080000fc                ADC1_2_IRQHandler
-                0x080000fc                SPI1_IRQHandler
-                0x080000fc                TAMPER_IRQHandler
-                0x080000fc                DMA1_Channel4_IRQHandler
-                0x080000fc                USART3_IRQHandler
-                0x080000fc                RTC_IRQHandler
-                0x080000fc                DMA1_Channel7_IRQHandler
-                0x080000fc                I2C1_ER_IRQHandler
-                0x080000fc                CAN1_RX1_IRQHandler
-                0x080000fc                TIM4_IRQHandler
-                0x080000fc                I2C1_EV_IRQHandler
-                0x080000fc                DMA1_Channel6_IRQHandler
-                0x080000fc                TIM3_IRQHandler
-                0x080000fc                RCC_IRQHandler
-                0x080000fc                TIM1_TRG_COM_IRQHandler
-                0x080000fc                DMA1_Channel1_IRQHandler
-                0x080000fc                Default_Handler
-                0x080000fc                EXTI15_10_IRQHandler
-                0x080000fc                EXTI9_5_IRQHandler
-                0x080000fc                SPI2_IRQHandler
-                0x080000fc                MemManage_Handler
-                0x080000fc                DMA1_Channel5_IRQHandler
-                0x080000fc                EXTI4_IRQHandler
-                0x080000fc                USB_LP_CAN1_RX0_IRQHandler
-                0x080000fc                USB_HP_CAN1_TX_IRQHandler
-                0x080000fc                DMA1_Channel3_IRQHandler
-                0x080000fc                TIM1_UP_IRQHandler
-                0x080000fc                WWDG_IRQHandler
-                0x080000fc                TIM2_IRQHandler
-                0x080000fc                TIM1_BRK_IRQHandler
-                0x080000fc                EXTI1_IRQHandler
-                0x080000fc                USART2_IRQHandler
-                0x080000fc                I2C2_ER_IRQHandler
-                0x080000fc                DMA1_Channel2_IRQHandler
-                0x080000fc                CAN1_SCE_IRQHandler
-                0x080000fc                FLASH_IRQHandler
-                0x080000fc                BusFault_Handler
-                0x080000fc                USART1_IRQHandler
-                0x080000fc                USBWakeUp_IRQHandler
-                0x08000102                Reset_Handler
+ .text          0x080000ec      0x2dc Build/main.o
+                0x080000ec                Set_Motor_Speed
+                0x080001b8                move_forward
+                0x080001de                move_backward
+                0x0800020c                turn_left
+                0x08000236                turn_right
+                0x08000260                stop_robot
+                0x08000278                delay
+                0x08000298                main
+ .text          0x080003c8       0x60 Build/startup.o
+                0x080003c8                RTC_Alarm_IRQHandler
+                0x080003c8                EXTI2_IRQHandler
+                0x080003c8                SVCall_Handler
+                0x080003c8                TIM1_CC_IRQHandler
+                0x080003c8                Systick_Handler
+                0x080003c8                Hardfault_Handler
+                0x080003c8                PVD_IRQHandler
+                0x080003c8                PendSV_Handler
+                0x080003c8                NMI_Handler
+                0x080003c8                EXTI3_IRQHandler
+                0x080003c8                EXTI0_IRQHandler
+                0x080003c8                I2C2_EV_IRQHandler
+                0x080003c8                UsageFault_Handler
+                0x080003c8                ADC1_2_IRQHandler
+                0x080003c8                SPI1_IRQHandler
+                0x080003c8                TAMPER_IRQHandler
+                0x080003c8                DMA1_Channel4_IRQHandler
+                0x080003c8                USART3_IRQHandler
+                0x080003c8                RTC_IRQHandler
+                0x080003c8                DMA1_Channel7_IRQHandler
+                0x080003c8                I2C1_ER_IRQHandler
+                0x080003c8                CAN1_RX1_IRQHandler
+                0x080003c8                TIM4_IRQHandler
+                0x080003c8                I2C1_EV_IRQHandler
+                0x080003c8                DMA1_Channel6_IRQHandler
+                0x080003c8                TIM3_IRQHandler
+                0x080003c8                RCC_IRQHandler
+                0x080003c8                TIM1_TRG_COM_IRQHandler
+                0x080003c8                DMA1_Channel1_IRQHandler
+                0x080003c8                Default_Handler
+                0x080003c8                EXTI15_10_IRQHandler
+                0x080003c8                EXTI9_5_IRQHandler
+                0x080003c8                SPI2_IRQHandler
+                0x080003c8                MemManage_Handler
+                0x080003c8                DMA1_Channel5_IRQHandler
+                0x080003c8                EXTI4_IRQHandler
+                0x080003c8                USB_LP_CAN1_RX0_IRQHandler
+                0x080003c8                USB_HP_CAN1_TX_IRQHandler
+                0x080003c8                DMA1_Channel3_IRQHandler
+                0x080003c8                TIM1_UP_IRQHandler
+                0x080003c8                WWDG_IRQHandler
+                0x080003c8                TIM2_IRQHandler
+                0x080003c8                TIM1_BRK_IRQHandler
+                0x080003c8                EXTI1_IRQHandler
+                0x080003c8                USART2_IRQHandler
+                0x080003c8                I2C2_ER_IRQHandler
+                0x080003c8                DMA1_Channel2_IRQHandler
+                0x080003c8                CAN1_SCE_IRQHandler
+                0x080003c8                FLASH_IRQHandler
+                0x080003c8                BusFault_Handler
+                0x080003c8                USART1_IRQHandler
+                0x080003c8                USBWakeUp_IRQHandler
+                0x080003ce                Reset_Handler
  *(.text*)
  *(.glue_7)
- .glue_7        0x0800015c        0x0 linker stubs
+ .glue_7        0x08000428        0x0 linker stubs
  *(.glue_7t)
- .glue_7t       0x0800015c        0x0 linker stubs
+ .glue_7t       0x08000428        0x0 linker stubs
  *(.eh_frame)
  *(.init)
  *(.fini)
-                0x0800015c                . = ALIGN (0x4)
-                0x0800015c                _etext = .
+                0x08000428                . = ALIGN (0x4)
+                0x08000428                _etext = .
 
-.vfp11_veneer   0x0800015c        0x0
- .vfp11_veneer  0x0800015c        0x0 linker stubs
+.vfp11_veneer   0x08000428        0x0
+ .vfp11_veneer  0x08000428        0x0 linker stubs
 
-.v4_bx          0x0800015c        0x0
- .v4_bx         0x0800015c        0x0 linker stubs
+.v4_bx          0x08000428        0x0
+ .v4_bx         0x08000428        0x0 linker stubs
 
-.iplt           0x0800015c        0x0
- .iplt          0x0800015c        0x0 Build/startup.o
+.iplt           0x08000428        0x0
+ .iplt          0x08000428        0x0 Build/main.o
 
-.rel.dyn        0x0800015c        0x0
- .rel.iplt      0x0800015c        0x0 Build/startup.o
+.rel.dyn        0x08000428        0x0
+ .rel.iplt      0x08000428        0x0 Build/main.o
 
-.rodata         0x0800015c        0x0
-                0x0800015c                . = ALIGN (0x4)
+.rodata         0x08000428        0x0
+                0x08000428                . = ALIGN (0x4)
  *(.rodata)
  *(.rodata*)
-                0x0800015c                . = ALIGN (0x4)
+                0x08000428                . = ALIGN (0x4)
 
-.ARM.extab      0x0800015c        0x0
-                0x0800015c                . = ALIGN (0x4)
+.ARM.extab      0x08000428        0x0
+                0x08000428                . = ALIGN (0x4)
  *(.ARM.extab* .gnu.linkonce.armextab.*)
-                0x0800015c                . = ALIGN (0x4)
+                0x08000428                . = ALIGN (0x4)
 
-.ARM            0x0800015c        0x0
-                0x0800015c                . = ALIGN (0x4)
-                0x0800015c                __exidix_start = .
+.ARM            0x08000428        0x0
+                0x08000428                . = ALIGN (0x4)
+                0x08000428                __exidix_start = .
  *(.ARM.exidx*)
-                0x0800015c                __exidix_end = .
-                0x0800015c                . = ALIGN (0x4)
+                0x08000428                __exidix_end = .
+                0x08000428                . = ALIGN (0x4)
 
-preinit_array   0x0800015c        0x0
-                0x0800015c                . = ALIGN (0x4)
+preinit_array   0x08000428        0x0
+                0x08000428                . = ALIGN (0x4)
                 [!provide]                PROVIDE (__preinit_array_start = .)
  *(.preinit_array*)
                 [!provide]                PROVIDE (__preinit_array_end = .)
-                0x0800015c                . = ALIGN (0x4)
+                0x08000428                . = ALIGN (0x4)
 
-init_array      0x0800015c        0x0
-                0x0800015c                . = ALIGN (0x4)
+init_array      0x08000428        0x0
+                0x08000428                . = ALIGN (0x4)
                 [!provide]                PROVIDE (__init_array_start = .)
  *SORT(.init_array*)
  *(.init_array*)
                 [!provide]                PROVIDE (__init_array_end = .)
-                0x0800015c                . = ALIGN (0x4)
+                0x08000428                . = ALIGN (0x4)
 
-fini_array      0x0800015c        0x0
-                0x0800015c                . = ALIGN (0x4)
+fini_array      0x08000428        0x0
+                0x08000428                . = ALIGN (0x4)
                 [!provide]                PROVIDE (__fini_array_start = .)
  *SORT(.fini_array*)
  *(.fini_array*)
                 [!provide]                PROVIDE (__fini_array_end = .)
-                0x0800015c                . = ALIGN (0x4)
-                0x0800015c                _sidata = LOADADDR (.data)
+                0x08000428                . = ALIGN (0x4)
+                0x08000428                _sidata = LOADADDR (.data)
 
-.data           0x20000000        0x0 load address 0x0800015c
+.data           0x20000000        0x0 load address 0x08000428
                 0x20000000                . = ALIGN (0x4)
                 0x20000000                _sdata = .
  *(.data)
@@ -173,8 +183,8 @@ fini_array      0x0800015c        0x0
                 0x20000000                . = ALIGN (0x4)
                 0x20000000                _edata = .
 
-.igot.plt       0x20000000        0x0 load address 0x0800015c
- .igot.plt      0x20000000        0x0 Build/startup.o
+.igot.plt       0x20000000        0x0 load address 0x08000428
+ .igot.plt      0x20000000        0x0 Build/main.o
                 0x20000000                . = ALIGN (0x4)
 
 .bss            0x00000000        0x0
@@ -216,13 +226,13 @@ LOAD c:/program files (x86)/gnu arm embedded toolchain/10 2021.10/bin/../lib/gcc
 LOAD c:/program files (x86)/gnu arm embedded toolchain/10 2021.10/bin/../lib/gcc/arm-none-eabi/10.3.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libm.a
 LOAD c:/program files (x86)/gnu arm embedded toolchain/10 2021.10/bin/../lib/gcc/arm-none-eabi/10.3.1/thumb/v7-m/nofp\libgcc.a
 
-.debug_info     0x00000000      0x17e
- .debug_info    0x00000000       0x43 Build/main.o
- .debug_info    0x00000043      0x13b Build/startup.o
+.debug_info     0x00000000      0x5ed
+ .debug_info    0x00000000      0x4b2 Build/main.o
+ .debug_info    0x000004b2      0x13b Build/startup.o
 
-.debug_abbrev   0x00000000       0xfc
- .debug_abbrev  0x00000000       0x3b Build/main.o
- .debug_abbrev  0x0000003b       0xc1 Build/startup.o
+.debug_abbrev   0x00000000      0x1eb
+ .debug_abbrev  0x00000000      0x12a Build/main.o
+ .debug_abbrev  0x0000012a       0xc1 Build/startup.o
 
 .debug_aranges  0x00000000       0x40
  .debug_aranges
@@ -230,13 +240,14 @@ LOAD c:/program files (x86)/gnu arm embedded toolchain/10 2021.10/bin/../lib/gcc
  .debug_aranges
                 0x00000020       0x20 Build/startup.o
 
-.debug_line     0x00000000      0x183
- .debug_line    0x00000000       0x3b Build/main.o
- .debug_line    0x0000003b      0x148 Build/startup.o
+.debug_line     0x00000000      0x37a
+ .debug_line    0x00000000      0x232 Build/main.o
+ .debug_line    0x00000232      0x148 Build/startup.o
 
-.debug_str      0x00000000      0x16d
- .debug_str     0x00000000       0xa6 Build/main.o
- .debug_str     0x000000a6       0xc7 Build/startup.o
+.debug_str      0x00000000      0x2d7
+ .debug_str     0x00000000      0x26b Build/main.o
+                                0x2c1 (size before relaxing)
+ .debug_str     0x0000026b       0x6c Build/startup.o
                                 0x19a (size before relaxing)
 
 .comment        0x00000000       0x49
@@ -244,9 +255,9 @@ LOAD c:/program files (x86)/gnu arm embedded toolchain/10 2021.10/bin/../lib/gcc
                                  0x4a (size before relaxing)
  .comment       0x00000049       0x4a Build/startup.o
 
-.debug_frame    0x00000000       0x78
- .debug_frame   0x00000000       0x30 Build/main.o
- .debug_frame   0x00000030       0x48 Build/startup.o
+.debug_frame    0x00000000      0x170
+ .debug_frame   0x00000000      0x128 Build/main.o
+ .debug_frame   0x00000128       0x48 Build/startup.o
 
 Cross Reference Table
 
@@ -287,6 +298,7 @@ Reset_Handler                                     Build/startup.o
 SPI1_IRQHandler                                   Build/startup.o
 SPI2_IRQHandler                                   Build/startup.o
 SVCall_Handler                                    Build/startup.o
+Set_Motor_Speed                                   Build/main.o
 Systick_Handler                                   Build/startup.o
 TAMPER_IRQHandler                                 Build/startup.o
 TIM1_BRK_IRQHandler                               Build/startup.o
@@ -310,6 +322,12 @@ _estack                                           Build/startup.o
 _sbss                                             Build/startup.o
 _sdata                                            Build/startup.o
 _sidata                                           Build/startup.o
+delay                                             Build/main.o
 isr_vector                                        Build/startup.o
 main                                              Build/main.o
                                                   Build/startup.o
+move_backward                                     Build/main.o
+move_forward                                      Build/main.o
+stop_robot                                        Build/main.o
+turn_left                                         Build/main.o
+turn_right                                        Build/main.o
