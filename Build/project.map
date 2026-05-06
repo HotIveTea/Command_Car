@@ -1,3 +1,7 @@
+Archive member included to satisfy reference by file (symbol)
+
+c:/program files (x86)/gnu arm embedded toolchain/10 2021.10/bin/../lib/gcc/arm-none-eabi/10.3.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-strcmp.o)
+                              Build/main.o (strcmp)
 
 Discarded input sections
 
@@ -17,6 +21,11 @@ Discarded input sections
                 0x00000000       0x2d Build/os.o
  .data          0x00000000        0x0 Build/startup.o
  .bss           0x00000000        0x0 Build/startup.o
+ .data          0x00000000        0x0 c:/program files (x86)/gnu arm embedded toolchain/10 2021.10/bin/../lib/gcc/arm-none-eabi/10.3.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-strcmp.o)
+ .bss           0x00000000        0x0 c:/program files (x86)/gnu arm embedded toolchain/10 2021.10/bin/../lib/gcc/arm-none-eabi/10.3.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-strcmp.o)
+ .debug_frame   0x00000000       0x34 c:/program files (x86)/gnu arm embedded toolchain/10 2021.10/bin/../lib/gcc/arm-none-eabi/10.3.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-strcmp.o)
+ .ARM.attributes
+                0x00000000       0x1b c:/program files (x86)/gnu arm embedded toolchain/10 2021.10/bin/../lib/gcc/arm-none-eabi/10.3.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-strcmp.o)
 
 Memory Configuration
 
@@ -42,138 +51,146 @@ LOAD Build/startup.o
                 0x08000000                isr_vector
                 0x080000ec                . = ALIGN (0x4)
 
-.text           0x080000ec      0x33c
+.text           0x080000ec      0x6a4
                 0x080000ec                . = ALIGN (0x4)
  *(.text)
- .text          0x080000ec      0x2dc Build/main.o
+ .text          0x080000ec      0x488 Build/main.o
                 0x080000ec                Set_Motor_Speed
-                0x080001b8                move_forward
-                0x080001de                move_backward
-                0x0800020c                turn_left
-                0x08000236                turn_right
-                0x08000260                stop_robot
-                0x08000278                delay
-                0x08000298                main
- .text          0x080003c8       0x60 Build/startup.o
-                0x080003c8                RTC_Alarm_IRQHandler
-                0x080003c8                EXTI2_IRQHandler
-                0x080003c8                SVCall_Handler
-                0x080003c8                TIM1_CC_IRQHandler
-                0x080003c8                Systick_Handler
-                0x080003c8                Hardfault_Handler
-                0x080003c8                PVD_IRQHandler
-                0x080003c8                PendSV_Handler
-                0x080003c8                NMI_Handler
-                0x080003c8                EXTI3_IRQHandler
-                0x080003c8                EXTI0_IRQHandler
-                0x080003c8                I2C2_EV_IRQHandler
-                0x080003c8                UsageFault_Handler
-                0x080003c8                ADC1_2_IRQHandler
-                0x080003c8                SPI1_IRQHandler
-                0x080003c8                TAMPER_IRQHandler
-                0x080003c8                DMA1_Channel4_IRQHandler
-                0x080003c8                USART3_IRQHandler
-                0x080003c8                RTC_IRQHandler
-                0x080003c8                DMA1_Channel7_IRQHandler
-                0x080003c8                I2C1_ER_IRQHandler
-                0x080003c8                CAN1_RX1_IRQHandler
-                0x080003c8                TIM4_IRQHandler
-                0x080003c8                I2C1_EV_IRQHandler
-                0x080003c8                DMA1_Channel6_IRQHandler
-                0x080003c8                TIM3_IRQHandler
-                0x080003c8                RCC_IRQHandler
-                0x080003c8                TIM1_TRG_COM_IRQHandler
-                0x080003c8                DMA1_Channel1_IRQHandler
-                0x080003c8                Default_Handler
-                0x080003c8                EXTI15_10_IRQHandler
-                0x080003c8                EXTI9_5_IRQHandler
-                0x080003c8                SPI2_IRQHandler
-                0x080003c8                MemManage_Handler
-                0x080003c8                DMA1_Channel5_IRQHandler
-                0x080003c8                EXTI4_IRQHandler
-                0x080003c8                USB_LP_CAN1_RX0_IRQHandler
-                0x080003c8                USB_HP_CAN1_TX_IRQHandler
-                0x080003c8                DMA1_Channel3_IRQHandler
-                0x080003c8                TIM1_UP_IRQHandler
-                0x080003c8                WWDG_IRQHandler
-                0x080003c8                TIM2_IRQHandler
-                0x080003c8                TIM1_BRK_IRQHandler
-                0x080003c8                EXTI1_IRQHandler
-                0x080003c8                USART2_IRQHandler
-                0x080003c8                I2C2_ER_IRQHandler
-                0x080003c8                DMA1_Channel2_IRQHandler
-                0x080003c8                CAN1_SCE_IRQHandler
-                0x080003c8                FLASH_IRQHandler
-                0x080003c8                BusFault_Handler
-                0x080003c8                USART1_IRQHandler
-                0x080003c8                USBWakeUp_IRQHandler
-                0x080003ce                Reset_Handler
+                0x080001c8                move_forward
+                0x080001f2                move_backward
+                0x08000224                turn_left
+                0x08000252                turn_right
+                0x08000280                stop_robot
+                0x08000298                USART_Send_Char
+                0x080002c4                USART_Send_String
+                0x080002ee                USART_Recieved_Char
+                0x08000314                USART_Recieved_String
+                0x0800036a                delay
+                0x0800038a                main
+ .text          0x08000574       0x60 Build/startup.o
+                0x08000574                RTC_Alarm_IRQHandler
+                0x08000574                EXTI2_IRQHandler
+                0x08000574                SVCall_Handler
+                0x08000574                TIM1_CC_IRQHandler
+                0x08000574                Systick_Handler
+                0x08000574                Hardfault_Handler
+                0x08000574                PVD_IRQHandler
+                0x08000574                PendSV_Handler
+                0x08000574                NMI_Handler
+                0x08000574                EXTI3_IRQHandler
+                0x08000574                EXTI0_IRQHandler
+                0x08000574                I2C2_EV_IRQHandler
+                0x08000574                UsageFault_Handler
+                0x08000574                ADC1_2_IRQHandler
+                0x08000574                SPI1_IRQHandler
+                0x08000574                TAMPER_IRQHandler
+                0x08000574                DMA1_Channel4_IRQHandler
+                0x08000574                USART3_IRQHandler
+                0x08000574                RTC_IRQHandler
+                0x08000574                DMA1_Channel7_IRQHandler
+                0x08000574                I2C1_ER_IRQHandler
+                0x08000574                CAN1_RX1_IRQHandler
+                0x08000574                TIM4_IRQHandler
+                0x08000574                I2C1_EV_IRQHandler
+                0x08000574                DMA1_Channel6_IRQHandler
+                0x08000574                TIM3_IRQHandler
+                0x08000574                RCC_IRQHandler
+                0x08000574                TIM1_TRG_COM_IRQHandler
+                0x08000574                DMA1_Channel1_IRQHandler
+                0x08000574                Default_Handler
+                0x08000574                EXTI15_10_IRQHandler
+                0x08000574                EXTI9_5_IRQHandler
+                0x08000574                SPI2_IRQHandler
+                0x08000574                MemManage_Handler
+                0x08000574                DMA1_Channel5_IRQHandler
+                0x08000574                EXTI4_IRQHandler
+                0x08000574                USB_LP_CAN1_RX0_IRQHandler
+                0x08000574                USB_HP_CAN1_TX_IRQHandler
+                0x08000574                DMA1_Channel3_IRQHandler
+                0x08000574                TIM1_UP_IRQHandler
+                0x08000574                WWDG_IRQHandler
+                0x08000574                TIM2_IRQHandler
+                0x08000574                TIM1_BRK_IRQHandler
+                0x08000574                EXTI1_IRQHandler
+                0x08000574                USART2_IRQHandler
+                0x08000574                I2C2_ER_IRQHandler
+                0x08000574                DMA1_Channel2_IRQHandler
+                0x08000574                CAN1_SCE_IRQHandler
+                0x08000574                FLASH_IRQHandler
+                0x08000574                BusFault_Handler
+                0x08000574                USART1_IRQHandler
+                0x08000574                USBWakeUp_IRQHandler
+                0x0800057a                Reset_Handler
+ .text          0x080005d4      0x1bc c:/program files (x86)/gnu arm embedded toolchain/10 2021.10/bin/../lib/gcc/arm-none-eabi/10.3.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-strcmp.o)
+                0x080005d4                strcmp
  *(.text*)
  *(.glue_7)
- .glue_7        0x08000428        0x0 linker stubs
+ .glue_7        0x08000790        0x0 linker stubs
  *(.glue_7t)
- .glue_7t       0x08000428        0x0 linker stubs
+ .glue_7t       0x08000790        0x0 linker stubs
  *(.eh_frame)
  *(.init)
  *(.fini)
-                0x08000428                . = ALIGN (0x4)
-                0x08000428                _etext = .
+                0x08000790                . = ALIGN (0x4)
+                0x08000790                _etext = .
 
-.vfp11_veneer   0x08000428        0x0
- .vfp11_veneer  0x08000428        0x0 linker stubs
+.vfp11_veneer   0x08000790        0x0
+ .vfp11_veneer  0x08000790        0x0 linker stubs
 
-.v4_bx          0x08000428        0x0
- .v4_bx         0x08000428        0x0 linker stubs
+.v4_bx          0x08000790        0x0
+ .v4_bx         0x08000790        0x0 linker stubs
 
-.iplt           0x08000428        0x0
- .iplt          0x08000428        0x0 Build/main.o
+.iplt           0x08000790        0x0
+ .iplt          0x08000790        0x0 Build/main.o
 
-.rel.dyn        0x08000428        0x0
- .rel.iplt      0x08000428        0x0 Build/main.o
-
-.rodata         0x08000428        0x0
-                0x08000428                . = ALIGN (0x4)
+.rodata         0x08000790       0x30
+                0x08000790                . = ALIGN (0x4)
  *(.rodata)
+ .rodata        0x08000790       0x2d Build/main.o
  *(.rodata*)
-                0x08000428                . = ALIGN (0x4)
+                0x080007c0                . = ALIGN (0x4)
+ *fill*         0x080007bd        0x3 
 
-.ARM.extab      0x08000428        0x0
-                0x08000428                . = ALIGN (0x4)
+.rel.dyn        0x080007c0        0x0
+ .rel.iplt      0x080007c0        0x0 Build/main.o
+
+.ARM.extab      0x080007c0        0x0
+                0x080007c0                . = ALIGN (0x4)
  *(.ARM.extab* .gnu.linkonce.armextab.*)
-                0x08000428                . = ALIGN (0x4)
+                0x080007c0                . = ALIGN (0x4)
 
-.ARM            0x08000428        0x0
-                0x08000428                . = ALIGN (0x4)
-                0x08000428                __exidix_start = .
+.ARM            0x080007c0        0x0
+                0x080007c0                . = ALIGN (0x4)
+                0x080007c0                __exidix_start = .
  *(.ARM.exidx*)
-                0x08000428                __exidix_end = .
-                0x08000428                . = ALIGN (0x4)
+                0x080007c0                __exidix_end = .
+                0x080007c0                . = ALIGN (0x4)
 
-preinit_array   0x08000428        0x0
-                0x08000428                . = ALIGN (0x4)
+preinit_array   0x080007c0        0x0
+                0x080007c0                . = ALIGN (0x4)
                 [!provide]                PROVIDE (__preinit_array_start = .)
  *(.preinit_array*)
                 [!provide]                PROVIDE (__preinit_array_end = .)
-                0x08000428                . = ALIGN (0x4)
+                0x080007c0                . = ALIGN (0x4)
 
-init_array      0x08000428        0x0
-                0x08000428                . = ALIGN (0x4)
+init_array      0x080007c0        0x0
+                0x080007c0                . = ALIGN (0x4)
                 [!provide]                PROVIDE (__init_array_start = .)
  *SORT(.init_array*)
  *(.init_array*)
                 [!provide]                PROVIDE (__init_array_end = .)
-                0x08000428                . = ALIGN (0x4)
+                0x080007c0                . = ALIGN (0x4)
 
-fini_array      0x08000428        0x0
-                0x08000428                . = ALIGN (0x4)
+fini_array      0x080007c0        0x0
+                0x080007c0                . = ALIGN (0x4)
                 [!provide]                PROVIDE (__fini_array_start = .)
  *SORT(.fini_array*)
  *(.fini_array*)
                 [!provide]                PROVIDE (__fini_array_end = .)
-                0x08000428                . = ALIGN (0x4)
-                0x08000428                _sidata = LOADADDR (.data)
+                0x080007c0                . = ALIGN (0x4)
+                0x080007c0                _sidata = LOADADDR (.data)
 
-.data           0x20000000        0x0 load address 0x08000428
+.data           0x20000000        0x0 load address 0x080007c0
                 0x20000000                . = ALIGN (0x4)
                 0x20000000                _sdata = .
  *(.data)
@@ -183,7 +200,7 @@ fini_array      0x08000428        0x0
                 0x20000000                . = ALIGN (0x4)
                 0x20000000                _edata = .
 
-.igot.plt       0x20000000        0x0 load address 0x08000428
+.igot.plt       0x20000000        0x0 load address 0x080007c0
  .igot.plt      0x20000000        0x0 Build/main.o
                 0x20000000                . = ALIGN (0x4)
 
@@ -214,7 +231,7 @@ fini_array      0x08000428        0x0
  libgcc.a(*)
 
 .ARM.attributes
-                0x00000000       0x2d
+                0x00000000       0x2b
  *(.ARM.attributes)
  .ARM.attributes
                 0x00000000       0x2d Build/main.o
@@ -226,13 +243,13 @@ LOAD c:/program files (x86)/gnu arm embedded toolchain/10 2021.10/bin/../lib/gcc
 LOAD c:/program files (x86)/gnu arm embedded toolchain/10 2021.10/bin/../lib/gcc/arm-none-eabi/10.3.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libm.a
 LOAD c:/program files (x86)/gnu arm embedded toolchain/10 2021.10/bin/../lib/gcc/arm-none-eabi/10.3.1/thumb/v7-m/nofp\libgcc.a
 
-.debug_info     0x00000000      0x5ed
- .debug_info    0x00000000      0x4b2 Build/main.o
- .debug_info    0x000004b2      0x13b Build/startup.o
+.debug_info     0x00000000      0x746
+ .debug_info    0x00000000      0x60b Build/main.o
+ .debug_info    0x0000060b      0x13b Build/startup.o
 
-.debug_abbrev   0x00000000      0x1eb
- .debug_abbrev  0x00000000      0x12a Build/main.o
- .debug_abbrev  0x0000012a       0xc1 Build/startup.o
+.debug_abbrev   0x00000000      0x233
+ .debug_abbrev  0x00000000      0x172 Build/main.o
+ .debug_abbrev  0x00000172       0xc1 Build/startup.o
 
 .debug_aranges  0x00000000       0x40
  .debug_aranges
@@ -240,14 +257,14 @@ LOAD c:/program files (x86)/gnu arm embedded toolchain/10 2021.10/bin/../lib/gcc
  .debug_aranges
                 0x00000020       0x20 Build/startup.o
 
-.debug_line     0x00000000      0x37a
- .debug_line    0x00000000      0x232 Build/main.o
- .debug_line    0x00000232      0x148 Build/startup.o
+.debug_line     0x00000000      0x423
+ .debug_line    0x00000000      0x2db Build/main.o
+ .debug_line    0x000002db      0x148 Build/startup.o
 
-.debug_str      0x00000000      0x2d7
- .debug_str     0x00000000      0x26b Build/main.o
-                                0x2c1 (size before relaxing)
- .debug_str     0x0000026b       0x6c Build/startup.o
+.debug_str      0x00000000      0x35c
+ .debug_str     0x00000000      0x2f0 Build/main.o
+                                0x352 (size before relaxing)
+ .debug_str     0x000002f0       0x6c Build/startup.o
                                 0x19a (size before relaxing)
 
 .comment        0x00000000       0x49
@@ -255,9 +272,9 @@ LOAD c:/program files (x86)/gnu arm embedded toolchain/10 2021.10/bin/../lib/gcc
                                  0x4a (size before relaxing)
  .comment       0x00000049       0x4a Build/startup.o
 
-.debug_frame    0x00000000      0x170
- .debug_frame   0x00000000      0x128 Build/main.o
- .debug_frame   0x00000128       0x48 Build/startup.o
+.debug_frame    0x00000000      0x204
+ .debug_frame   0x00000000      0x1bc Build/main.o
+ .debug_frame   0x000001bc       0x48 Build/startup.o
 
 Cross Reference Table
 
@@ -311,6 +328,10 @@ TIM4_IRQHandler                                   Build/startup.o
 USART1_IRQHandler                                 Build/startup.o
 USART2_IRQHandler                                 Build/startup.o
 USART3_IRQHandler                                 Build/startup.o
+USART_Recieved_Char                               Build/main.o
+USART_Recieved_String                             Build/main.o
+USART_Send_Char                                   Build/main.o
+USART_Send_String                                 Build/main.o
 USBWakeUp_IRQHandler                              Build/startup.o
 USB_HP_CAN1_TX_IRQHandler                         Build/startup.o
 USB_LP_CAN1_RX0_IRQHandler                        Build/startup.o
@@ -329,5 +350,7 @@ main                                              Build/main.o
 move_backward                                     Build/main.o
 move_forward                                      Build/main.o
 stop_robot                                        Build/main.o
+strcmp                                            c:/program files (x86)/gnu arm embedded toolchain/10 2021.10/bin/../lib/gcc/arm-none-eabi/10.3.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-strcmp.o)
+                                                  Build/main.o
 turn_left                                         Build/main.o
 turn_right                                        Build/main.o

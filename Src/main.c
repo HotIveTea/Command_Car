@@ -91,6 +91,20 @@ void stop_robot()
     Set_Motor_Speed(1, 0);
     Set_Motor_Speed(2, 0);
 }
+void USART_Send_Char(char ch)
+{
+    while (!(USART1->SR & (1 << 7)))
+    {
+    }
+    USART1->DR = (ch & 0xFF);
+}
+void USART_Send_String(char *str)
+{
+    while (*str)
+    {
+        USART_Send_Char(*str++);
+    }
+}
 char USART_Recieved_Char()
 {
     while (!(USART1->SR & (1 << 5)))
@@ -105,7 +119,9 @@ void USART_Recieved_String(char *buffer, int lenght)
     while (i < lenght - 1)
     {
         re_char = USART_Recieved_Char();
-        if (re_char == '\r' || re_char == '\n')
+        if (re_char == '\n')
+            continue;
+        if (re_char == '\r')
             break;
         buffer[i++] = re_char;
     }
@@ -119,14 +135,14 @@ void delay(volatile uint32_t count)
 }
 int main(void)
 {
-    RCC->APB2ENR |= (1 << 2) | (1 << 3) | (1 << 0);
-    RCC->APB1ENR |= (1 << 0) | (1 << 17);
+    RCC->APB2ENR |= (1 << 2) | (1 << 3) | (1 << 0) | (1 << 4) | (1 << 14);
+    RCC->APB1ENR |= (1 << 0);
     AFIO->MAPR |= (0x2 << 24);
     // === GPIO SETTING === //
     GPIOA->CRL &= ~((0xF << 8) | (0xF << 4));
-    GPIOA->CRH &= ~((0xF << 8) | (0xF << 4));
-    GPIOA->CRL |= (0xB << 8) | (0xB << 4);
-    GPIOA->CRH |= (0xB << 4) | (0x04 << 8);
+    GPIOA->CRH &= ~((0xF << 8) | (0xF << 4)); // Clearing PA9 and PA10
+    GPIOA->CRL |= (0x0B << 8) | (0x0B << 4);
+    GPIOA->CRH |= (0x0B << 4) | (0x04 << 8); // Config PA9 as AF and PA10 as INPUT FLOATING
     GPIOB->CRL &= ~((0xF << 16) | (0xF << 20) | (0xF << 24) | (0xF << 28));
     GPIOB->CRH &= ~(0xF << 1);
     GPIOB->CRL |= (0x1 << 16) | (1 << 20) | (0x1 << 24) | (0x1 << 28);
@@ -143,31 +159,50 @@ int main(void)
     TIM2->CCR3 = 0;
     TIM2->CR1 |= (1 << 0);
     // === UART SETTING === //
-    USART1->BRR = (8000000 / (115200 / 2)) / 115200;
-    USART1->CR1 |= (1 << 2) | (1 << 3) | (1 << 13);
+    USART1->BRR = (8000000 + (115200 / 2)) / 115200; // Baudrate = 115200
+    USART1->CR1 |= (1 << 2) | (1 << 3) | (1 << 13);  // Config TE, RE and UE
+    // === TESTING === //
+    GPIOC->CRH &= ~(0xF << 20);
+    GPIOC->CRH |= (0x1 << 20);
+    GPIOC->BRR |= (1 << 13);
+    USART_Send_String("\n===START===\n");
+    USART_Send_String("\nYou may begin\n");
     char cmd_buffer[16];
     while (1)
     {
         USART_Recieved_String(cmd_buffer, 16);
-        if (strcmp(cmd_buffer, "fwd") == 0)
+        if (strcmp(cmd_buffer, "bat") == 0)
         {
-            move_forward(500);
+            GPIOC->BRR = (1 << 13);
         }
-        else if (strcmp(cmd_buffer, "back") == 0)
+        else if (strcmp(cmd_buffer, "tat") == 0)
         {
-            move_backward(500);
+            GPIOC->BSRR = (1 << 13);
         }
-        else if (strcmp(cmd_buffer, "left") == 0)
+        else if (strcmp(cmd_buffer, "nhap") == 0)
         {
-            turn_left(400);
+            GPIOC->ODR ^= (1 << 13);
+            delay(100000);
         }
-        else if (strcmp(cmd_buffer, "right") == 0)
-        {
-            turn_right(400);
-        }
-        else if (strcmp(cmd_buffer, "stop") == 0)
-        {
-            stop_robot();
-        }
+        // if (strcmp(cmd_buffer, "fwd") == 0)
+        // {
+        //     move_forward(500);
+        // }
+        // else if (strcmp(cmd_buffer, "back") == 0)
+        // {
+        //     move_backward(500);
+        // }
+        // else if (strcmp(cmd_buffer, "left") == 0)
+        // {
+        //     turn_left(400);
+        // }
+        // else if (strcmp(cmd_buffer, "right") == 0)
+        // {
+        //     turn_right(400);
+        // }
+        // else if (strcmp(cmd_buffer, "stop") == 0)
+        // {
+        //     stop_robot();
+        // }
     }
 }
