@@ -1,5 +1,16 @@
 #include "stm32f108.h"
 #include "string.h"
+#include "os.h"
+#define STACK_SIZE 100
+uint32_t idle_stack[STACK_SIZE];
+uint32_t task1_stack[STACK_SIZE];
+uint32_t task2_stack[STACK_SIZE];
+uint32_t task3_stack[STACK_SIZE];
+uint32_t task4_stack[STACK_SIZE];
+uint32_t task5_stack[STACK_SIZE];
+TCB_t tcbidle, tcb1, tcb2, tcb3, tcb4, tcb5;
+extern TCB_t volatile *current_task;
+extern TCB_t volatile *next_task;
 void Set_Motor_Speed(uint8_t motor, int16_t speed)
 {
     uint16_t duty = 0;
@@ -127,37 +138,31 @@ void USART_Recieved_String(char *buffer, int lenght)
     }
     buffer[i] = '\0';
 }
-void delay(volatile uint32_t count)
-{
-    while (count--)
-    {
-    }
-}
 int main(void)
 {
     RCC->APB2ENR |= (1 << 2) | (1 << 3) | (1 << 0) | (1 << 4) | (1 << 14);
     RCC->APB1ENR |= (1 << 0);
     AFIO->MAPR |= (0x2 << 24);
     // === GPIO SETTING === //
-    GPIOA->CRL &= ~((0xF << 8) | (0xF << 4));
-    GPIOA->CRH &= ~((0xF << 8) | (0xF << 4)); // Clearing PA9 and PA10
-    GPIOA->CRL |= (0x0B << 8) | (0x0B << 4);
-    GPIOA->CRH |= (0x0B << 4) | (0x04 << 8); // Config PA9 as AF and PA10 as INPUT FLOATING
-    GPIOB->CRL &= ~((0xF << 16) | (0xF << 20) | (0xF << 24) | (0xF << 28));
-    GPIOB->CRH &= ~(0xF << 1);
-    GPIOB->CRL |= (0x1 << 16) | (1 << 20) | (0x1 << 24) | (0x1 << 28);
-    GPIOB->CRH |= (0x1 << 1);
+    GPIOA->CRL &= ~((0xF << 8) | (0xF << 4));                               // Clear PA1 and PA2
+    GPIOA->CRH &= ~((0xF << 8) | (0xF << 4));                               // Clear PA9 and PA10
+    GPIOA->CRL |= (0x0B << 8) | (0x0B << 4);                                // Set PA1 and PA2 as AF
+    GPIOA->CRH |= (0x0B << 4) | (0x04 << 8);                                // Config PA9 as AF and PA10 as INPUT FLOATING
+    GPIOB->CRL &= ~((0xF << 16) | (0xF << 20) | (0xF << 24) | (0xF << 28)); // Clear PB4, 5, 6, 7
+    GPIOB->CRH &= ~(0xF << 1);                                              // Clear PB8
+    GPIOB->CRL |= (0x1 << 16) | (1 << 20) | (0x1 << 24) | (0x1 << 28);      // Set PB4, 5, 6, 7 as OUTPUT
+    GPIOB->CRH |= (0x1 << 1);                                               // Set PB8 as OUTPUT
     // === TIMER SETTING === //
-    TIM2->PSC = 7;
-    TIM2->ARR = 999;
-    TIM2->CCMR1 &= ~(0x7 << 12);
-    TIM2->CCMR1 |= (0x6 << 12);
-    TIM2->CCMR2 &= ~(0x7 << 4);
-    TIM2->CCMR2 |= (0x6 << 4);
-    TIM2->CCER |= (1 << 4) | (1 << 8);
+    TIM2->PSC = 7;                     // Set PreScaler = 7
+    TIM2->ARR = 999;                   // Auto Reset = 999
+    TIM2->CCMR1 &= ~(0x7 << 12);       // Clear Output compare 2 mode
+    TIM2->CCMR1 |= (0x6 << 12);        // Set 110 -> PWM Mode 1
+    TIM2->CCMR2 &= ~(0x7 << 4);        // Clear Output compare 3 mode
+    TIM2->CCMR2 |= (0x6 << 4);         // Set 110 -> PWM Mode 1
+    TIM2->CCER |= (1 << 4) | (1 << 8); // Enable Capture/Compare 2 and 3
     TIM2->CCR2 = 0;
     TIM2->CCR3 = 0;
-    TIM2->CR1 |= (1 << 0);
+    TIM2->CR1 |= (1 << 0); // Enable Counter
     // === UART SETTING === //
     USART1->BRR = (8000000 + (115200 / 2)) / 115200; // Baudrate = 115200
     USART1->CR1 |= (1 << 2) | (1 << 3) | (1 << 13);  // Config TE, RE and UE
@@ -165,44 +170,29 @@ int main(void)
     GPIOC->CRH &= ~(0xF << 20);
     GPIOC->CRH |= (0x1 << 20);
     GPIOC->BRR |= (1 << 13);
-    USART_Send_String("\n===START===\n");
-    USART_Send_String("\nYou may begin\n");
     char cmd_buffer[16];
     while (1)
     {
         USART_Recieved_String(cmd_buffer, 16);
-        if (strcmp(cmd_buffer, "bat") == 0)
+        if (strcmp(cmd_buffer, "fwd") == 0)
         {
-            GPIOC->BRR = (1 << 13);
+            move_forward(800);
         }
-        else if (strcmp(cmd_buffer, "tat") == 0)
+        else if (strcmp(cmd_buffer, "back") == 0)
         {
-            GPIOC->BSRR = (1 << 13);
+            move_backward(800);
         }
-        else if (strcmp(cmd_buffer, "nhap") == 0)
+        else if (strcmp(cmd_buffer, "left") == 0)
         {
-            GPIOC->ODR ^= (1 << 13);
-            delay(100000);
+            turn_left(900);
         }
-        // if (strcmp(cmd_buffer, "fwd") == 0)
-        // {
-        //     move_forward(500);
-        // }
-        // else if (strcmp(cmd_buffer, "back") == 0)
-        // {
-        //     move_backward(500);
-        // }
-        // else if (strcmp(cmd_buffer, "left") == 0)
-        // {
-        //     turn_left(400);
-        // }
-        // else if (strcmp(cmd_buffer, "right") == 0)
-        // {
-        //     turn_right(400);
-        // }
-        // else if (strcmp(cmd_buffer, "stop") == 0)
-        // {
-        //     stop_robot();
-        // }
+        else if (strcmp(cmd_buffer, "right") == 0)
+        {
+            turn_right(900);
+        }
+        else if (strcmp(cmd_buffer, "stop") == 0)
+        {
+            stop_robot();
+        }
     }
 }

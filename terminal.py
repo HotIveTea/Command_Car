@@ -13,7 +13,7 @@ except Exception as e:
     exit()
 try:
     while(1):
-        cmd = input("\nNhap 'BAT' de den sang, 'TAT' de den tat, nhap 'q' de thoat ")
+        cmd = input("\nNhap cac lenh dieu khien xe, nhap 'q' de thoat ")
         if cmd.lower() == 'q':
             break
         payload = cmd + '\r\n'

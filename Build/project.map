@@ -6,7 +6,7 @@ c:/program files (x86)/gnu arm embedded toolchain/10 2021.10/bin/../lib/gcc/arm-
 Discarded input sections
 
  .data          0x00000000        0x0 Build/main.o
- .bss           0x00000000        0x0 Build/main.o
+ .bss           0x00000000      0x9a8 Build/main.o
  .text          0x00000000        0x0 Build/os.o
  .data          0x00000000        0x0 Build/os.o
  .bss           0x00000000        0x0 Build/os.o
@@ -65,8 +65,8 @@ LOAD Build/startup.o
                 0x080002c4                USART_Send_String
                 0x080002ee                USART_Recieved_Char
                 0x08000314                USART_Recieved_String
-                0x0800036a                delay
-                0x0800038a                main
+                0x0800036a                Idle_Task
+                0x08000372                main
  .text          0x08000574       0x60 Build/startup.o
                 0x08000574                RTC_Alarm_IRQHandler
                 0x08000574                EXTI2_IRQHandler
@@ -143,54 +143,54 @@ LOAD Build/startup.o
 .iplt           0x08000790        0x0
  .iplt          0x08000790        0x0 Build/main.o
 
-.rodata         0x08000790       0x30
+.rodata         0x08000790       0x24
                 0x08000790                . = ALIGN (0x4)
  *(.rodata)
- .rodata        0x08000790       0x2d Build/main.o
+ .rodata        0x08000790       0x21 Build/main.o
  *(.rodata*)
-                0x080007c0                . = ALIGN (0x4)
- *fill*         0x080007bd        0x3 
+                0x080007b4                . = ALIGN (0x4)
+ *fill*         0x080007b1        0x3 
 
-.rel.dyn        0x080007c0        0x0
- .rel.iplt      0x080007c0        0x0 Build/main.o
+.rel.dyn        0x080007b4        0x0
+ .rel.iplt      0x080007b4        0x0 Build/main.o
 
-.ARM.extab      0x080007c0        0x0
-                0x080007c0                . = ALIGN (0x4)
+.ARM.extab      0x080007b4        0x0
+                0x080007b4                . = ALIGN (0x4)
  *(.ARM.extab* .gnu.linkonce.armextab.*)
-                0x080007c0                . = ALIGN (0x4)
+                0x080007b4                . = ALIGN (0x4)
 
-.ARM            0x080007c0        0x0
-                0x080007c0                . = ALIGN (0x4)
-                0x080007c0                __exidix_start = .
+.ARM            0x080007b4        0x0
+                0x080007b4                . = ALIGN (0x4)
+                0x080007b4                __exidix_start = .
  *(.ARM.exidx*)
-                0x080007c0                __exidix_end = .
-                0x080007c0                . = ALIGN (0x4)
+                0x080007b4                __exidix_end = .
+                0x080007b4                . = ALIGN (0x4)
 
-preinit_array   0x080007c0        0x0
-                0x080007c0                . = ALIGN (0x4)
+preinit_array   0x080007b4        0x0
+                0x080007b4                . = ALIGN (0x4)
                 [!provide]                PROVIDE (__preinit_array_start = .)
  *(.preinit_array*)
                 [!provide]                PROVIDE (__preinit_array_end = .)
-                0x080007c0                . = ALIGN (0x4)
+                0x080007b4                . = ALIGN (0x4)
 
-init_array      0x080007c0        0x0
-                0x080007c0                . = ALIGN (0x4)
+init_array      0x080007b4        0x0
+                0x080007b4                . = ALIGN (0x4)
                 [!provide]                PROVIDE (__init_array_start = .)
  *SORT(.init_array*)
  *(.init_array*)
                 [!provide]                PROVIDE (__init_array_end = .)
-                0x080007c0                . = ALIGN (0x4)
+                0x080007b4                . = ALIGN (0x4)
 
-fini_array      0x080007c0        0x0
-                0x080007c0                . = ALIGN (0x4)
+fini_array      0x080007b4        0x0
+                0x080007b4                . = ALIGN (0x4)
                 [!provide]                PROVIDE (__fini_array_start = .)
  *SORT(.fini_array*)
  *(.fini_array*)
                 [!provide]                PROVIDE (__fini_array_end = .)
-                0x080007c0                . = ALIGN (0x4)
-                0x080007c0                _sidata = LOADADDR (.data)
+                0x080007b4                . = ALIGN (0x4)
+                0x080007b4                _sidata = LOADADDR (.data)
 
-.data           0x20000000        0x0 load address 0x080007c0
+.data           0x20000000        0x0 load address 0x080007b4
                 0x20000000                . = ALIGN (0x4)
                 0x20000000                _sdata = .
  *(.data)
@@ -200,7 +200,7 @@ fini_array      0x080007c0        0x0
                 0x20000000                . = ALIGN (0x4)
                 0x20000000                _edata = .
 
-.igot.plt       0x20000000        0x0 load address 0x080007c0
+.igot.plt       0x20000000        0x0 load address 0x080007b4
  .igot.plt      0x20000000        0x0 Build/main.o
                 0x20000000                . = ALIGN (0x4)
 
@@ -243,13 +243,13 @@ LOAD c:/program files (x86)/gnu arm embedded toolchain/10 2021.10/bin/../lib/gcc
 LOAD c:/program files (x86)/gnu arm embedded toolchain/10 2021.10/bin/../lib/gcc/arm-none-eabi/10.3.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libm.a
 LOAD c:/program files (x86)/gnu arm embedded toolchain/10 2021.10/bin/../lib/gcc/arm-none-eabi/10.3.1/thumb/v7-m/nofp\libgcc.a
 
-.debug_info     0x00000000      0x746
- .debug_info    0x00000000      0x60b Build/main.o
- .debug_info    0x0000060b      0x13b Build/startup.o
+.debug_info     0x00000000      0x866
+ .debug_info    0x00000000      0x72b Build/main.o
+ .debug_info    0x0000072b      0x13b Build/startup.o
 
-.debug_abbrev   0x00000000      0x233
- .debug_abbrev  0x00000000      0x172 Build/main.o
- .debug_abbrev  0x00000172       0xc1 Build/startup.o
+.debug_abbrev   0x00000000      0x271
+ .debug_abbrev  0x00000000      0x1b0 Build/main.o
+ .debug_abbrev  0x000001b0       0xc1 Build/startup.o
 
 .debug_aranges  0x00000000       0x40
  .debug_aranges
@@ -257,14 +257,14 @@ LOAD c:/program files (x86)/gnu arm embedded toolchain/10 2021.10/bin/../lib/gcc
  .debug_aranges
                 0x00000020       0x20 Build/startup.o
 
-.debug_line     0x00000000      0x423
- .debug_line    0x00000000      0x2db Build/main.o
- .debug_line    0x000002db      0x148 Build/startup.o
+.debug_line     0x00000000      0x429
+ .debug_line    0x00000000      0x2e1 Build/main.o
+ .debug_line    0x000002e1      0x148 Build/startup.o
 
-.debug_str      0x00000000      0x35c
- .debug_str     0x00000000      0x2f0 Build/main.o
-                                0x352 (size before relaxing)
- .debug_str     0x000002f0       0x6c Build/startup.o
+.debug_str      0x00000000      0x3d8
+ .debug_str     0x00000000      0x36c Build/main.o
+                                0x3ce (size before relaxing)
+ .debug_str     0x0000036c       0x6c Build/startup.o
                                 0x19a (size before relaxing)
 
 .comment        0x00000000       0x49
@@ -272,9 +272,9 @@ LOAD c:/program files (x86)/gnu arm embedded toolchain/10 2021.10/bin/../lib/gcc
                                  0x4a (size before relaxing)
  .comment       0x00000049       0x4a Build/startup.o
 
-.debug_frame    0x00000000      0x204
- .debug_frame   0x00000000      0x1bc Build/main.o
- .debug_frame   0x000001bc       0x48 Build/startup.o
+.debug_frame    0x00000000      0x1f4
+ .debug_frame   0x00000000      0x1ac Build/main.o
+ .debug_frame   0x000001ac       0x48 Build/startup.o
 
 Cross Reference Table
 
@@ -304,6 +304,7 @@ I2C1_ER_IRQHandler                                Build/startup.o
 I2C1_EV_IRQHandler                                Build/startup.o
 I2C2_ER_IRQHandler                                Build/startup.o
 I2C2_EV_IRQHandler                                Build/startup.o
+Idle_Task                                         Build/main.o
 MemManage_Handler                                 Build/startup.o
 NMI_Handler                                       Build/startup.o
 PVD_IRQHandler                                    Build/startup.o
@@ -343,7 +344,7 @@ _estack                                           Build/startup.o
 _sbss                                             Build/startup.o
 _sdata                                            Build/startup.o
 _sidata                                           Build/startup.o
-delay                                             Build/main.o
+idle_stack                                        Build/main.o
 isr_vector                                        Build/startup.o
 main                                              Build/main.o
                                                   Build/startup.o
@@ -352,5 +353,16 @@ move_forward                                      Build/main.o
 stop_robot                                        Build/main.o
 strcmp                                            c:/program files (x86)/gnu arm embedded toolchain/10 2021.10/bin/../lib/gcc/arm-none-eabi/10.3.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-strcmp.o)
                                                   Build/main.o
+task1_stack                                       Build/main.o
+task2_stack                                       Build/main.o
+task3_stack                                       Build/main.o
+task4_stack                                       Build/main.o
+task5_stack                                       Build/main.o
+tcb1                                              Build/main.o
+tcb2                                              Build/main.o
+tcb3                                              Build/main.o
+tcb4                                              Build/main.o
+tcb5                                              Build/main.o
+tcbidle                                           Build/main.o
 turn_left                                         Build/main.o
 turn_right                                        Build/main.o
