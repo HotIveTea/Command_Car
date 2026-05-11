@@ -1,148 +1,43 @@
 #include "stm32f108.h"
 #include "string.h"
+#include "stdlib.h"
 #include "os.h"
 #define STACK_SIZE 100
+#define CMD_MAX_LEN 16
 uint32_t idle_stack[STACK_SIZE];
 uint32_t task1_stack[STACK_SIZE];
 uint32_t task2_stack[STACK_SIZE];
-uint32_t task3_stack[STACK_SIZE];
-uint32_t task4_stack[STACK_SIZE];
-uint32_t task5_stack[STACK_SIZE];
-TCB_t tcbidle, tcb1, tcb2, tcb3, tcb4, tcb5;
+char rx_buffer[CMD_MAX_LEN];
+volatile int rx_index = 0;
+volatile int rx_complete = 0;
+TCB_t *waiting_task = 0;
+TCB_t tcbidle, tcb1, tcb2;
 extern TCB_t volatile *current_task;
 extern TCB_t volatile *next_task;
-void Set_Motor_Speed(uint8_t motor, int16_t speed)
+typedef enum
 {
-    uint16_t duty = 0;
-    uint8_t dir = 0;
-    if (speed > 0)
+    STOP = 0,
+    FORWARD,
+    BACKWARD,
+    LEFT,
+    RIGHT
+} CarDirection;
+typedef struct
+{
+    CarDirection dir;
+    uint16_t speed;
+    int32_t time;
+} Car;
+volatile Car car_target = {STOP, 0};
+void Idle_task(void)
+{
+    while (1)
     {
-        duty = speed;
-        dir = 1;
-    }
-    else if (speed < 0)
-    {
-        duty = -speed;
-        dir = 2;
-    }
-    else
-    {
-        duty = 0;
-        dir = 0;
-    }
-    if (duty > 999)
-        duty = 999;
-    if (motor == 1)
-    {
-        if (dir == 1)
-        {
-            GPIOB->BSRR = (1 << 4);
-            GPIOB->BRR = (1 << 5);
-        }
-        else if (dir == 2)
-        {
-            GPIOB->BRR = (1 << 4);
-            GPIOB->BSRR = (1 << 5);
-        }
-        else
-        {
-            GPIOB->BRR = (1 << 4) | (1 << 5);
-        }
-        TIM2->CCR2 = duty;
-    }
-    else if (motor == 2)
-    {
-        if (dir == 1)
-        {
-            GPIOB->BSRR = (1 << 6);
-            GPIOB->BRR = (1 << 7);
-        }
-        else if (dir == 2)
-        {
-            GPIOB->BRR = (1 << 6);
-            GPIOB->BSRR = (1 << 7);
-        }
-        else
-        {
-            GPIOB->BRR = (1 << 6) | (1 << 7);
-        }
-        TIM2->CCR3 = duty;
+        __asm volatile("WFI \n");
     }
 }
-// Foward
-void move_forward(int16_t speed)
+void GPIO_Init()
 {
-    Set_Motor_Speed(1, speed);
-    Set_Motor_Speed(2, speed);
-}
-
-// Backward
-void move_backward(int16_t speed)
-{
-    Set_Motor_Speed(1, -speed);
-    Set_Motor_Speed(2, -speed);
-}
-
-// Turn Left
-void turn_left(int16_t speed)
-{
-    Set_Motor_Speed(1, -speed);
-    Set_Motor_Speed(2, speed);
-}
-
-// Turn Right
-void turn_right(int16_t speed)
-{
-    Set_Motor_Speed(1, speed);
-    Set_Motor_Speed(2, -speed);
-}
-// Stop
-void stop_robot()
-{
-    Set_Motor_Speed(1, 0);
-    Set_Motor_Speed(2, 0);
-}
-void USART_Send_Char(char ch)
-{
-    while (!(USART1->SR & (1 << 7)))
-    {
-    }
-    USART1->DR = (ch & 0xFF);
-}
-void USART_Send_String(char *str)
-{
-    while (*str)
-    {
-        USART_Send_Char(*str++);
-    }
-}
-char USART_Recieved_Char()
-{
-    while (!(USART1->SR & (1 << 5)))
-    {
-    }
-    return (char)(USART1->DR & 0xFF);
-}
-void USART_Recieved_String(char *buffer, int lenght)
-{
-    int i = 0;
-    char re_char;
-    while (i < lenght - 1)
-    {
-        re_char = USART_Recieved_Char();
-        if (re_char == '\n')
-            continue;
-        if (re_char == '\r')
-            break;
-        buffer[i++] = re_char;
-    }
-    buffer[i] = '\0';
-}
-int main(void)
-{
-    RCC->APB2ENR |= (1 << 2) | (1 << 3) | (1 << 0) | (1 << 4) | (1 << 14);
-    RCC->APB1ENR |= (1 << 0);
-    AFIO->MAPR |= (0x2 << 24);
     // === GPIO SETTING === //
     GPIOA->CRL &= ~((0xF << 8) | (0xF << 4));                               // Clear PA1 and PA2
     GPIOA->CRH &= ~((0xF << 8) | (0xF << 4));                               // Clear PA9 and PA10
@@ -152,6 +47,9 @@ int main(void)
     GPIOB->CRH &= ~(0xF << 1);                                              // Clear PB8
     GPIOB->CRL |= (0x1 << 16) | (1 << 20) | (0x1 << 24) | (0x1 << 28);      // Set PB4, 5, 6, 7 as OUTPUT
     GPIOB->CRH |= (0x1 << 1);                                               // Set PB8 as OUTPUT
+}
+void TIMER_Init()
+{
     // === TIMER SETTING === //
     TIM2->PSC = 7;                     // Set PreScaler = 7
     TIM2->ARR = 999;                   // Auto Reset = 999
@@ -163,36 +61,217 @@ int main(void)
     TIM2->CCR2 = 0;
     TIM2->CCR3 = 0;
     TIM2->CR1 |= (1 << 0); // Enable Counter
+}
+void USART_Init()
+{
     // === UART SETTING === //
-    USART1->BRR = (8000000 + (115200 / 2)) / 115200; // Baudrate = 115200
-    USART1->CR1 |= (1 << 2) | (1 << 3) | (1 << 13);  // Config TE, RE and UE
+    USART1->BRR = (8000000 + (115200 / 2)) / 115200;      // Baudrate = 115200
+    USART1->CR1 |= (1 << 2) | (1 << 3) | (1 << 13);       // Config TE, RE and UE
+    USART1->CR1 |= (1 << 5);                              // RXNE interrupt enable
+    *(volatile uint32_t *)0xE000E104 |= (1 << (37 - 32)); // NVIC_ISER1
+    // NVIC_EnableIRQ(USART1_IRQn);
+}
+void USART1_IRQHandler(void)
+{
+    uint32_t sr = USART1->SR;
+    if (sr & ((1 << 3) | (1 << 2) | (1 << 1)))
+    {
+        char dummy = USART1->DR;
+        (void)dummy;
+    }
+    if (sr & (1 << 5))
+    {
+        char c = (char)USART1->DR;
+        if (c == '\r' || rx_index > CMD_MAX_LEN - 1)
+        {
+            rx_buffer[rx_index] = '\0';
+            rx_complete = 1;
+            rx_index = 0;
+            if (waiting_task != 0)
+            {
+                waiting_task->sleep_time = 0;
+                waiting_task = 0;
+                *(volatile uint32_t *)0xE000ED04 |= (1 << 28);
+            }
+        }
+        else
+        {
+            if (c != '\n')
+            {
+                rx_buffer[rx_index++] = c;
+            }
+        }
+    }
+}
+void OS_USART_Received_String(char *out_buffer)
+{
+    __asm volatile("CPSID I \n");
+    rx_complete = 0;
+    waiting_task = current_task;
+    __asm volatile("CPSIE I \n");
+    while (1)
+    {
+        __asm volatile("CPSID I \n");
+        if (rx_complete == 1)
+        {
+            __asm volatile("CPSIE I \n");
+            break;
+        }
+        __asm volatile("CPSIE I \n");
+
+        OS_Delay(10);
+    }
+    while (rx_complete == 0)
+    {
+        OS_Delay(0xFFFFFFFF);
+    }
+    int i = 0;
+    for (i = 0; rx_buffer[i] != '\0'; i++)
+    {
+        out_buffer[i] = rx_buffer[i];
+    }
+    out_buffer[i] = '\0';
+}
+void USART_Command_Task(void *arg)
+{
+    char cmd_buffer[CMD_MAX_LEN];
+    while (1)
+    {
+        OS_USART_Received_String(cmd_buffer);
+        char action = cmd_buffer[0];
+        int val_speed = atoi(&cmd_buffer[1]);
+        int val_time = 0;
+        for (int i = 1; i < CMD_MAX_LEN; i++)
+        {
+            if (cmd_buffer[i] == ',')
+            {
+                val_time = atoi(&cmd_buffer[i + 1]);
+                break;
+            }
+        }
+        __asm volatile("CPSID I \n");
+        if (action == 'F')
+            car_target.dir = FORWARD;
+        else if (action == 'B')
+            car_target.dir = BACKWARD;
+        else if (action == 'L')
+            car_target.dir = LEFT;
+        else if (action == 'R')
+            car_target.dir = RIGHT;
+        else
+            car_target.dir = STOP;
+
+        car_target.speed = val_speed;
+        car_target.time = val_time;
+        __asm volatile("CPSIE I \n");
+    }
+}
+void Move_Forward(uint32_t speed)
+{
+    uint32_t pulse = (speed * 1000) / 100;
+    TIM2->CCR2 = pulse;
+    TIM2->CCR3 = pulse;
+    GPIOB->BSRR = (1 << 4);
+    GPIOB->BRR = (1 << 5);
+    GPIOB->BSRR = (1 << 6);
+    GPIOB->BRR = (1 << 7);
+}
+void Move_Backward(uint32_t speed)
+{
+    uint32_t pulse = (speed * 1000) / 100;
+    TIM2->CCR2 = pulse;
+    TIM2->CCR3 = pulse;
+    GPIOB->BSRR = (1 << 5);
+    GPIOB->BRR = (1 << 4);
+    GPIOB->BSRR = (1 << 7);
+    GPIOB->BRR = (1 << 6);
+}
+void Move_Left(uint32_t speed)
+{
+    uint32_t pulse = (speed * 1000) / 100;
+    TIM2->CCR2 = pulse;
+    TIM2->CCR3 = pulse;
+    GPIOB->BSRR = (1 << 5);
+    GPIOB->BRR = (1 << 4);
+    GPIOB->BSRR = (1 << 6);
+    GPIOB->BRR = (1 << 7);
+}
+void Move_Right(uint32_t speed)
+{
+    uint32_t pulse = (speed * 1000) / 100;
+    TIM2->CCR2 = pulse;
+    TIM2->CCR3 = pulse;
+    GPIOB->BSRR = (1 << 4);
+    GPIOB->BRR = (1 << 5);
+    GPIOB->BSRR = (1 << 7);
+    GPIOB->BRR = (1 << 6);
+}
+void Stop()
+{
+    GPIOB->BSRR = (1 << 4);
+    GPIOB->BSRR = (1 << 5);
+    GPIOB->BSRR = (1 << 7);
+    GPIOB->BSRR = (1 << 6);
+}
+void Car_Control_Task(void *arg)
+{
+    while (1)
+    {
+        if (car_target.time > 0)
+        {
+            switch (car_target.dir)
+            {
+            case FORWARD:
+                GPIOC->ODR ^= (1 << 13);
+                Move_Forward(car_target.speed);
+                break;
+            case BACKWARD:
+                GPIOC->ODR ^= (1 << 13);
+                Move_Backward(car_target.speed);
+                break;
+            case LEFT:
+                GPIOC->ODR ^= (1 << 13);
+                Move_Left(car_target.speed);
+                break;
+            case RIGHT:
+                GPIOC->ODR ^= (1 << 13);
+                Move_Right(car_target.speed);
+                break;
+            default:
+                Stop();
+                break;
+            }
+            __asm volatile("CPSID I \n");
+            car_target.time -= 20;
+            __asm volatile("CPSIE I \n");
+        }
+        else
+        {
+            Stop();
+        }
+
+        OS_Delay(20);
+    }
+}
+int main(void)
+{
+    // === CONFIG === //
+    RCC->APB2ENR |= (1 << 2) | (1 << 3) | (1 << 0) | (1 << 4) | (1 << 14);
+    RCC->APB1ENR |= (1 << 0);
+    AFIO->MAPR |= (0x2 << 24);
+    GPIO_Init();
+    TIMER_Init();
+    USART_Init();
     // === TESTING === //
     GPIOC->CRH &= ~(0xF << 20);
     GPIOC->CRH |= (0x1 << 20);
-    GPIOC->BRR |= (1 << 13);
-    char cmd_buffer[16];
-    while (1)
-    {
-        USART_Recieved_String(cmd_buffer, 16);
-        if (strcmp(cmd_buffer, "fwd") == 0)
-        {
-            move_forward(800);
-        }
-        else if (strcmp(cmd_buffer, "back") == 0)
-        {
-            move_backward(800);
-        }
-        else if (strcmp(cmd_buffer, "left") == 0)
-        {
-            turn_left(900);
-        }
-        else if (strcmp(cmd_buffer, "right") == 0)
-        {
-            turn_right(900);
-        }
-        else if (strcmp(cmd_buffer, "stop") == 0)
-        {
-            stop_robot();
-        }
-    }
+    GPIOC->BRR = (1 << 13);
+    OS_TaskCreate(&tcbidle, Idle_task, NULL, idle_stack, STACK_SIZE);
+    OS_AddThread(&tcbidle);
+    OS_TaskCreate(&tcb1, USART_Command_Task, NULL, task1_stack, STACK_SIZE);
+    OS_TaskCreate(&tcb2, Car_Control_Task, NULL, task2_stack, STACK_SIZE);
+    OS_AddThread(&tcb1);
+    OS_AddThread(&tcb2);
+    OS_Start();
+    return 0;
 }
