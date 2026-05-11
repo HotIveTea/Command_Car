@@ -5,7 +5,7 @@ _Min_Stack_Size = 0x400;
 MEMORY
 {
     SRAM (wrx) : ORIGIN = 0x20000000, LENGTH = 20K
-    FLASH (rx) : ORIGIN = 0x8000000, LENGTH = 64K
+    FLASH (rx) : ORIGIN = 0x08000000, LENGTH = 64K
 }
 SECTIONS
 {
@@ -103,7 +103,7 @@ SECTIONS
         . = ALIGN(4);
          _ebss = .;
          __bss_end__ =  _ebss;
-    } > RAM
+    } > SRAM
     ._user_heap_stack :
     {
         . = ALIGN(8);
@@ -112,7 +112,7 @@ SECTIONS
         . = . + _Min_Heap_Size;
         . = . + _Min_Stack_Size;
         . = ALIGN(8);
-    } >RAM
+    } > SRAM
     /DISCARD/ :
     {
         libc.a ( * )
