@@ -3,7 +3,8 @@
 #include "stdlib.h"
 #include "os.h"
 #define STACK_SIZE 100
-#define CMD_MAX_LEN 16
+#define CMD_MAX_LEN 64
+#define QUEUE_SIZE 10
 uint32_t idle_stack[STACK_SIZE];
 uint32_t task1_stack[STACK_SIZE];
 uint32_t task2_stack[STACK_SIZE];
@@ -28,7 +29,9 @@ typedef struct
     uint16_t speed;
     int32_t time;
 } Car;
-volatile Car car_target = {STOP, 0};
+volatile Car Car_queue[QUEUE_SIZE];
+volatile int queue_head = 0;
+volatile int queue_tail = 0;
 void Idle_task(void)
 {
     while (1)
@@ -82,24 +85,24 @@ void USART1_IRQHandler(void)
     if (sr & (1 << 5))
     {
         char c = (char)USART1->DR;
-        if (c == '\r' || rx_index > CMD_MAX_LEN - 1)
+        if (c == '\r' | c == '\n' || rx_index > CMD_MAX_LEN - 1)
         {
-            rx_buffer[rx_index] = '\0';
-            rx_complete = 1;
-            rx_index = 0;
-            if (waiting_task != 0)
+            if (rx_index > 0)
             {
-                waiting_task->sleep_time = 0;
-                waiting_task = 0;
-                *(volatile uint32_t *)0xE000ED04 |= (1 << 28);
+                rx_buffer[rx_index] = '\0';
+                rx_complete = 1;
+                rx_index = 0;
+                if (waiting_task != 0)
+                {
+                    waiting_task->sleep_time = 0;
+                    waiting_task = 0;
+                    *(volatile uint32_t *)0xE000ED04 |= (1 << 28);
+                }
             }
         }
         else
         {
-            if (c != '\n')
-            {
-                rx_buffer[rx_index++] = c;
-            }
+            rx_buffer[rx_index++] = c;
         }
     }
 }
@@ -121,10 +124,6 @@ void OS_USART_Received_String(char *out_buffer)
 
         OS_Delay(10);
     }
-    while (rx_complete == 0)
-    {
-        OS_Delay(0xFFFFFFFF);
-    }
     int i = 0;
     for (i = 0; rx_buffer[i] != '\0'; i++)
     {
@@ -138,32 +137,54 @@ void USART_Command_Task(void *arg)
     while (1)
     {
         OS_USART_Received_String(cmd_buffer);
-        char action = cmd_buffer[0];
-        int val_speed = atoi(&cmd_buffer[1]);
-        int val_time = 0;
-        for (int i = 1; i < CMD_MAX_LEN; i++)
+        const char *delimiter = "+\r\n";
+        char *tasks[10];
+        int count = 0;
+        char *token = strtok(cmd_buffer, delimiter);
+        while (token != NULL && count < 10)
         {
-            if (cmd_buffer[i] == ',')
-            {
-                val_time = atoi(&cmd_buffer[i + 1]);
-                break;
-            }
+            tasks[count++] = token;
+            token = strtok(NULL, delimiter);
         }
-        __asm volatile("CPSID I \n");
-        if (action == 'F')
-            car_target.dir = FORWARD;
-        else if (action == 'B')
-            car_target.dir = BACKWARD;
-        else if (action == 'L')
-            car_target.dir = LEFT;
-        else if (action == 'R')
-            car_target.dir = RIGHT;
-        else
-            car_target.dir = STOP;
-
-        car_target.speed = val_speed;
-        car_target.time = val_time;
-        __asm volatile("CPSIE I \n");
+        for (int i = 0; i < count; i++)
+        {
+            char *part = tasks[i];
+            int idx = 0;
+            while (part[idx] == ' ')
+                idx++;
+            char action = part[idx];
+            int val_speed = atoi(&part[1 + idx]);
+            int val_time = 0;
+            for (int k = idx + 1; k < 20; k++)
+            {
+                if (part[k] == '\0')
+                    break;
+                if (part[k] == ',')
+                {
+                    val_time = atoi(&part[k + 1]);
+                    break;
+                }
+            }
+            if (val_time <= 0)
+                val_time = 1000;
+            CarDirection temp_dir;
+            if (action == 'F')
+                temp_dir = FORWARD;
+            else if (action == 'B')
+                temp_dir = BACKWARD;
+            else if (action == 'L')
+                temp_dir = LEFT;
+            else if (action == 'R')
+                temp_dir = RIGHT;
+            else
+                temp_dir = STOP;
+            __asm volatile("CPSID I \n");
+            Car_queue[queue_head].dir = temp_dir;
+            Car_queue[queue_head].speed = val_speed;
+            Car_queue[queue_head].time = val_time;
+            queue_head = (queue_head + 1) % QUEUE_SIZE;
+            __asm volatile("CPSIE I \n");
+        }
     }
 }
 void Move_Forward(uint32_t speed)
@@ -188,23 +209,23 @@ void Move_Backward(uint32_t speed)
 }
 void Move_Left(uint32_t speed)
 {
-    uint32_t pulse = (speed * 1000) / 100;
+    uint32_t pulse = (speed * 2000) / 100;
     TIM2->CCR2 = pulse;
-    TIM2->CCR3 = pulse;
-    GPIOB->BSRR = (1 << 5);
-    GPIOB->BRR = (1 << 4);
-    GPIOB->BSRR = (1 << 6);
+    TIM2->CCR3 = 0;
+    GPIOB->BSRR = (1 << 4);
+    GPIOB->BRR = (1 << 5);
     GPIOB->BRR = (1 << 7);
+    GPIOB->BRR = (1 << 6);
 }
 void Move_Right(uint32_t speed)
 {
-    uint32_t pulse = (speed * 1000) / 100;
-    TIM2->CCR2 = pulse;
+    uint32_t pulse = (speed * 2000) / 100;
+    TIM2->CCR2 = 0;
     TIM2->CCR3 = pulse;
-    GPIOB->BSRR = (1 << 4);
     GPIOB->BRR = (1 << 5);
-    GPIOB->BSRR = (1 << 7);
+    GPIOB->BRR = (1 << 4);
     GPIOB->BRR = (1 << 6);
+    GPIOB->BSRR = (1 << 7);
 }
 void Stop()
 {
@@ -215,41 +236,47 @@ void Stop()
 }
 void Car_Control_Task(void *arg)
 {
+    Car current_task = {STOP, 0, 0};
     while (1)
     {
-        if (car_target.time > 0)
+        if (current_task.time <= 0)
         {
-            switch (car_target.dir)
+            Stop();
+            if (queue_head != queue_tail)
+            {
+                __asm volatile("CPSID I \n");
+                current_task = Car_queue[queue_tail];
+                queue_tail = (queue_tail + 1) % QUEUE_SIZE;
+                __asm volatile("CPSIE I\n");
+            }
+        }
+        if (current_task.time > 0)
+        {
+            switch (current_task.dir)
             {
             case FORWARD:
                 GPIOC->ODR ^= (1 << 13);
-                Move_Forward(car_target.speed);
+                Move_Forward(current_task.speed);
                 break;
             case BACKWARD:
                 GPIOC->ODR ^= (1 << 13);
-                Move_Backward(car_target.speed);
+                Move_Backward(current_task.speed);
                 break;
             case LEFT:
                 GPIOC->ODR ^= (1 << 13);
-                Move_Left(car_target.speed);
+
+                Move_Left(current_task.speed);
                 break;
             case RIGHT:
                 GPIOC->ODR ^= (1 << 13);
-                Move_Right(car_target.speed);
+                Move_Right(current_task.speed);
                 break;
             default:
                 Stop();
                 break;
             }
-            __asm volatile("CPSID I \n");
-            car_target.time -= 20;
-            __asm volatile("CPSIE I \n");
+            current_task.time -= 20;
         }
-        else
-        {
-            Stop();
-        }
-
         OS_Delay(20);
     }
 }
