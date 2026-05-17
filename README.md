@@ -5,42 +5,81 @@
 ![MCU](https://img.shields.io/badge/MCU-STM32F108-green.svg)
 ![Status](https://img.shields.io/badge/Status-Active_Learning-success.svg)
 
+## Demo
+
+## Documents
+
+| Files  | Description                                                                             |
+| ------ | --------------------------------------------------------------------------------------- |
+| README | Main project overview, hardware information, firmware features, and operating principle |
+| Build  | Contains files.o, .elf, .map                                                            |
+| Inc    | Header files, register maps, macros                                                     |
+| Src    | Source C files (main.c, peripheral drivers)                                             |
+| Gui    | Includes GUI using Python                                                               |
+
 ## Project Overview
 
-This project is a deep dive into **Bare-Metal Coding** by focusing on the pratical implementation
-of STM32F108C microcontroller to control a real-world application: a Command Car. Rather than relying on high-level Hardware Abstraction Layers (HAL) or standard peripheral libraries, this firmware is built entirely from scratch.
+This project implements a bare-metal Command Car system based on the STM32F108C microcontroller.
+The system uses an HC-05 Bluetooth module for receiving navigation commands and a TB6612FNG driver for controlling the DC motors.
+The project demonstrates embedded firmware development concepts including:
 
-## Key Objectives
+- Bare-metal register-level programming
+- Custom build system (Makefile)
+- Memory mapping and custom linker scripts
+- Hand-written startup code
+- GPIO and USART interfacing
+- Hardware timer configuration and PWM generation
+- System clock (RCC) and interrupt (NVIC) management
+- GUI using Python
 
-- **Custom Build System** : Utilizing a custom `Makefile` for compiling, assembling, and linking the firmware without relying on external IDE abstractions.
-- **Memory Mapping & Linker Scripts** : Custom `.ld` linker scripts to precisely define memory regions (Flash, RAM) and section placement (`.text`, `.data`, `.bss`).
-- **Startup Code** : Hand-written startup code in C/Assembly to initialize the vector table, copy the `.data` section to SRAM, zero out the `.bss` section, and branch to `main()`.
-- **Register-Level Driver Development** : Direct memory access to configure and manipulate hardware registers.
+## Hardware Components
 
-## Hardware & Peripherals Used
+| Components | Description              |
+| ---------- | ------------------------ |
+| MCU        | STM32F108C               |
+| Driver     | TB6612FNG & V1 TT Motors |
+| Bluetooth  | HC-05                    |
+| Systick    | RCC & NVIC               |
+| GUI        | App desgined by Python   |
 
-The project interfaces with the following MCU peripherals at the register level to drive the Command Car's mechanics and communications:
+## Schematic
 
-- **GPIO (General Purpose Input/Output)**: Configured for sensor inputs, LED status indicators, and motor driver control signals.
-- **TIMER**: Utilized for generating precise hardware delays and generating PWM signals to control the speed of the DC motors.
-- **USART (Universal Synchronous/Asynchronous Receiver-Transmitter)**: Handles asynchronous serial communication for parsing incoming commands (e.g., from a Bluetooth module or serial terminal) to control the car's navigation.
-- **Core Architecture (ARM Cortex-M / STM32)**: Managing system clocks (RCC) and interrupts (NVIC).
-- **Hardware** : In this project, we will use HC-05 for Bluetooth and TB6612FNG for controlling motors
+<figure style="text-align: center;">
+    <img src="Images\Screenshot 2026-05-14 090106.png" width="800" alt="Command Car">
+    <figcaption>Figure 1: Command Car Schematic</figcaption>
+</figure>
 
-## Project Structure
+## Features
 
-_(Adjust the tree below based on your actual repository structure)_
+**Command Communication & Parsing**:
 
-```text
-📦 Command_Car
- ┣ 📂 .vscode
- ┣ 📂 Inc               # Header files, register maps, macros
- ┣ 📂 Src               # Source C files (main.c, peripheral drivers)
- ┣ 📂 Build         # Contains files.o, .elf, .map
- ┣ 📜 Makefile          # Build automation
- ┣ 📜 stm32f103.ld    # Linker script for memory layout
- ┗ 📜 README.md         # Project documentation
-```
+- Wireless serial communication via HC-05 Bluetooth module
+- Custom command protocol processing (e.g., parsing direction and speed vectors)
+- Robust string handling and data extraction on bare-metal MCU
+- Error handling for invalid or corrupted incoming packets
+
+**PC Control Application**:
+
+- User-friendly GUI for seamless PC-to-MCU interaction
+- Dynamic serial port configuration and connection management
+- Intuitive directional control interface (on-screen buttons / keyboard mapping)
+- Real-time command transmission and communication logging
+
+**Vehicle Control Mechanics**:
+
+- PWM-based variable speed control via hardware timers
+- Dual DC motor driving using TB6612FNG
+- Real-time mechanical response to parsed control inputs
+
+## System Operating Principle
+
+**Core Logic: Circular Queue & RTOS Tasks**
+By using a circular queue, we can parse a command string into multiple tasks and store them in the queue. This ensures the MCU has sufficient time to execute each task sequentially, allowing the motors to physically operate without missing instructions.
+
+The concept is based on the Producer-Consumer pattern:
+
+- `queue_head` acts as the Producer (parsing USART strings).
+- `queue_tail` acts as the Consumer (executing motor controls).
 
 ## Getting Started
 
@@ -81,7 +120,3 @@ I document my daily progress, bugs encountered, and architectural concepts learn
 [Bare-metal-coding](https://www.notion.so/Bare-metal-programming-155984656d2c836f813c01230064508a?source=copy_link)
 I also document my daily progress, bugs and approachs about RTOS in Notion.
 [RTOS from scratch](https://www.notion.so/RTOS-from-scratch-English-ver-33b984656d2c806c9579eb40ed18872a?source=copy_link)
-
-## Philosophy
-
-Bare-metal programming can be unforgiving, but it is deeply rewarding. A hard fault or a segmentation fault is just a stepping stone to fully mastering embedded systems. Keep tinkering, keep breaking things, and keep learning.
