@@ -5,8 +5,6 @@
 ![MCU](https://img.shields.io/badge/MCU-STM32F108-green.svg)
 ![Status](https://img.shields.io/badge/Status-Active_Learning-success.svg)
 
-## Demo
-
 ## Documents
 
 | Files  | Description                                                                             |
