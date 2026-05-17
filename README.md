@@ -7,13 +7,13 @@
 
 ## Documents
 
-| Files  | Description                                                                             |
-| ------ | --------------------------------------------------------------------------------------- |
-| README | Main project overview, hardware information, firmware features, and operating principle |
-| Build  | Contains files.o, .elf, .map                                                            |
-| Inc    | Header files, register maps, macros                                                     |
-| Src    | Source C files (main.c, peripheral drivers)                                             |
-| Gui    | Includes GUI using Python                                                               |
+| Files                  | Description                                                                             |
+| ---------------------- | --------------------------------------------------------------------------------------- |
+| [README.md](README.md) | Main project overview, hardware information, firmware features, and operating principle |
+| [Build](./Build/)      | Contains files.o, .elf, .map                                                            |
+| [Inc](./Inc/)          | Header files, register maps, macros                                                     |
+| [Src](./Src/)          | Source C files (main.c, peripheral drivers)                                             |
+| [Gui](./Gui/)          | Includes GUI using Python                                                               |
 
 ## Project Overview
 
@@ -118,3 +118,19 @@ I document my daily progress, bugs encountered, and architectural concepts learn
 [Bare-metal-coding](https://www.notion.so/Bare-metal-programming-155984656d2c836f813c01230064508a?source=copy_link)
 I also document my daily progress, bugs and approachs about RTOS in Notion.
 [RTOS from scratch](https://www.notion.so/RTOS-from-scratch-English-ver-33b984656d2c806c9579eb40ed18872a?source=copy_link)
+
+<h3>📫 Contact Me</h3>
+
+<p>
+  <a href="https://github.com/HotIveTea">
+    <img src="https://img.shields.io/badge/GitHub-HotIveTea-181717?style=for-the-badge&logo=github&logoColor=white"/>
+  </a>
+  
+  <a href="https://www.linkedin.com/in/nguyễn-kim-thành-5ba280389/">
+    <img src="https://img.shields.io/badge/LinkedIn-Nguyễn%20Kim%20Thành-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white"/>
+  </a>
+  
+  <a href="mailto:nkimthanh47@gmail.com">
+    <img src="https://img.shields.io/badge/Gmail-nkimthanh47%40gmail.com-EA4335?style=for-the-badge&logo=gmail&logoColor=white"/>
+  </a>
+</p>
