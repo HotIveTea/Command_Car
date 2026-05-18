@@ -56,6 +56,10 @@ The project demonstrates embedded firmware development concepts including:
 - Robust string handling and data extraction on bare-metal MCU
 - Error handling for invalid or corrupted incoming packets
 
+```bash
+  [direction][speed],[time] + [direction][speed],[time] + ......
+```
+
 **PC Control Application**:
 
 - User-friendly GUI for seamless PC-to-MCU interaction
