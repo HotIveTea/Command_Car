@@ -1,6 +1,7 @@
 # Command Car: STM32 From Sccratch
 
 ![C](https://img.shields.io/badge/Language-C-blue.svg)
+![Python](https://img.shields.io/badge/Language-Python-yellow.svg)
 ![Build](https://img.shields.io/badge/Build-Make-orange.svg)
 ![MCU](https://img.shields.io/badge/MCU-STM32F108-green.svg)
 ![Status](https://img.shields.io/badge/Status-Active_Learning-success.svg)
