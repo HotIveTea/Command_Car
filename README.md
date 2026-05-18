@@ -73,6 +73,13 @@ The project demonstrates embedded firmware development concepts including:
 - Dual DC motor driving using TB6612FNG
 - Real-time mechanical response to parsed control inputs
 
+## App
+
+<figure style="text-align: center;">
+    <img src="Images\Screenshot 2026-05-18 101738.png" width="800" alt="App">
+    <figcaption>Figure 2: User's Interface (GUI)</figcaption>
+</figure>
+
 ## System Operating Principle
 
 **Core Logic: Circular Queue & RTOS Tasks**
