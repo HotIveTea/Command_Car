@@ -1,4 +1,4 @@
-# Command Car: STM32 From Sccratch
+# Command Car: STM32 From Scratch
 
 ![C](https://img.shields.io/badge/Language-C-blue.svg)
 ![Python](https://img.shields.io/badge/Language-Python-yellow.svg)
@@ -55,11 +55,16 @@ The project demonstrates embedded firmware development concepts including:
 - Wireless serial communication via HC-05 Bluetooth module
 - Custom command protocol processing (e.g., parsing direction and speed vectors)
 - Robust string handling and data extraction on bare-metal MCU
-- Error handling for invalid or corrupted incoming packets
+- Error handling for invalid or corrupted incoming packets \
+  _The sent packets should look something like this:_
 
 ```bash
   [direction][speed],[time] + [direction][speed],[time] + ......
 ```
+
+- `direction`: L - Left, R - Right, F - Forward, B - Backward
+- `speed`: Car's speed from 0 to 200
+- `time`: The amount of time the device will run
 
 **PC Control Application**:
 
@@ -131,7 +136,7 @@ I document my daily progress, bugs encountered, and architectural concepts learn
 I also document my daily progress, bugs and approachs about RTOS in Notion.
 [RTOS from scratch](https://www.notion.so/RTOS-from-scratch-English-ver-33b984656d2c806c9579eb40ed18872a?source=copy_link)
 
-<h3>📫 Contact Me</h3>
+<h3>Contact Me</h3>
 
 <p>
   <a href="https://github.com/HotIveTea">
